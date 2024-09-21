@@ -10,8 +10,13 @@ public class RegularBarrel : MonoBehaviour
         if(collision.gameObject.CompareTag("Projectile"))
         {
             Debug.Log("Hit");
-            StartCoroutine(Despawn());
+            DestroyBarrel();
         }
+    }
+
+    public void DestroyBarrel()
+    {
+        StartCoroutine(Despawn());
     }
 
     IEnumerator Despawn()
