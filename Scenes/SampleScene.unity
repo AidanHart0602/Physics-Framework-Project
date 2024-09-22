@@ -2484,7 +2484,7 @@ MonoBehaviour:
   _lineSimulator: {fileID: 1447465773}
   _projectile: {fileID: 5379218772199417069, guid: 05a119d23ac49bb4d8b6383bfeca17f5, type: 3}
   _launchPower: 20
-  _cooldownTime: 1.5
+  CooldownTime: 1.5
   _aimLimit: 0
   _speed: 3
 --- !u!114 &1447465773

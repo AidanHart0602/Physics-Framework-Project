@@ -13,7 +13,7 @@ public class Launcher : MonoBehaviour
     private float _launchPower;
     private bool _cooldown = true;
     [SerializeField]
-    private float _cooldownTime = 3.0f;
+    public float CooldownTime = 3.0f;
     private float _currentRotation;
     [SerializeField]
     private int _aimLimit;
@@ -28,8 +28,6 @@ public class Launcher : MonoBehaviour
         _input.Controls.Shoot.performed += Shoot_performed;
         _input.Controls.Aiming.performed += Aiming_performed;
     }
-
-
 
     private void Aiming_performed(InputAction.CallbackContext context)
     {
@@ -99,7 +97,7 @@ public class Launcher : MonoBehaviour
     IEnumerator Cooldown()
     {
         _cooldown = false;
-        yield return new WaitForSeconds(_cooldownTime);
+        yield return new WaitForSeconds(CooldownTime);
         _cooldown = true;
     }
 }
