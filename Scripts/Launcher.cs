@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class Launcher : MonoBehaviour
 {
+    [SerializeField]
+    private Transform _cannon;
+    [SerializeField]
+    private Transform _cannonBase;
     private LauncherActionMap _input;
     [SerializeField]
     private SimPhys _lineSimulator;
@@ -14,11 +18,8 @@ public class Launcher : MonoBehaviour
     private bool _cooldown = true;
     [SerializeField]
     public float CooldownTime = 3.0f;
-    private float _currentRotation;
     [SerializeField]
-    private int _aimLimit;
-    [SerializeField]
-    private int _speed = 3;
+    private int _speed = 10;
     // Start is called before the first frame update
 
     private void Start()
@@ -26,26 +27,6 @@ public class Launcher : MonoBehaviour
         _input = new LauncherActionMap();
         _input.Controls.Enable();
         _input.Controls.Shoot.performed += Shoot_performed;
-        _input.Controls.Aiming.performed += Aiming_performed;
-    }
-
-    private void Aiming_performed(InputAction.CallbackContext context)
-    {
-   
-        var aim = _input.Controls.Aiming.ReadValue<float>(); 
-        if(aim == -1 && _aimLimit != 2) 
-        {
-            _currentRotation = -3f;
-            transform.Rotate(_currentRotation, 0, 0);
-            _aimLimit++;
-        }
-
-        if (aim == 1 && _aimLimit != 0) 
-        {
-            _currentRotation = 3f;
-            transform.Rotate(_currentRotation, 0, 0);
-            _aimLimit--;
-        }
     }
 
     private void Shoot_performed(InputAction.CallbackContext context)
@@ -63,35 +44,45 @@ public class Launcher : MonoBehaviour
     void FixedUpdate()
     {
         _lineSimulator.LineCalculation(_projectile, transform.position, transform.forward * _launchPower);
+        Rotation();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Rotation()
     {
-        Movement();
-    }
 
-    private void Movement()
-    {
+        Vector3 RotRestrict = this.transform.rotation.eulerAngles;
+        RotRestrict.z = Mathf.Clamp(RotRestrict.z, 0, 0);
+
+        this.transform.rotation = Quaternion.Euler(RotRestrict);
+        _cannon.transform.rotation = Quaternion.Euler(RotRestrict);
+        _cannonBase.transform.rotation = Quaternion.Euler(RotRestrict);
+        
+        //Left and Right Aim Controls
         var Movement = _input.Controls.Movement.ReadValue<float>();
         if (Movement == 1)
         {
-            transform.Translate(transform.right * _speed * -1 * Time.deltaTime);
+            _cannonBase.transform.Rotate(transform.up * -1 * _speed * Time.deltaTime);
+            transform.Rotate(transform.up * _speed * -1 * Time.deltaTime);
         }
 
         else if (Movement == -1)
-        {
-            transform.Translate(transform.right * _speed * Time.deltaTime);
+        { 
+            _cannonBase.transform.Rotate(transform.up * _speed * Time.deltaTime);
+            transform.Rotate(transform.up * _speed * Time.deltaTime);
         }
 
-        if (transform.position.x > 19f)
+        //Up and Down aim controls
+        var aim = _input.Controls.Aiming.ReadValue<float>();
+        if (aim == 1)
         {
-            transform.position = new Vector3(19f, transform.position.y, transform.position.z);
+            _cannon.transform.Rotate(transform.right * _speed * Time.deltaTime);
+            transform.Rotate(transform.right * _speed * Time.deltaTime);
         }
 
-        if (transform.position.x < -19f)
+        if (aim == -1)
         {
-            transform.position = new Vector3(-19f, transform.position.y, transform.position.z);
+            _cannon.transform.Rotate(transform.right * -1 * _speed * Time.deltaTime);
+            transform.Rotate(transform.right * -1 * _speed * Time.deltaTime);
         }
     }
     IEnumerator Cooldown()

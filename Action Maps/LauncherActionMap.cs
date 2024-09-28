@@ -53,6 +53,15 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CamRotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""9037bdf6-f874-4277-ba2b-cdad509e2071"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -132,6 +141,39 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
                     ""action"": ""Shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""ef1c3782-dbec-4abf-b03a-2a183822860d"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CamRotation"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""f7257627-41d3-41d0-9bd9-2d278a80df7a"",
+                    ""path"": ""<Mouse>/position/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CamRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""deae2b1a-aedc-4dd6-a7f8-4f15bcd3687e"",
+                    ""path"": ""<Mouse>/position/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CamRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -143,6 +185,7 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
         m_Controls_Movement = m_Controls.FindAction("Movement", throwIfNotFound: true);
         m_Controls_Aiming = m_Controls.FindAction("Aiming", throwIfNotFound: true);
         m_Controls_Shoot = m_Controls.FindAction("Shoot", throwIfNotFound: true);
+        m_Controls_CamRotation = m_Controls.FindAction("CamRotation", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,6 +250,7 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_Movement;
     private readonly InputAction m_Controls_Aiming;
     private readonly InputAction m_Controls_Shoot;
+    private readonly InputAction m_Controls_CamRotation;
     public struct ControlsActions
     {
         private @LauncherActionMap m_Wrapper;
@@ -214,6 +258,7 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_Controls_Movement;
         public InputAction @Aiming => m_Wrapper.m_Controls_Aiming;
         public InputAction @Shoot => m_Wrapper.m_Controls_Shoot;
+        public InputAction @CamRotation => m_Wrapper.m_Controls_CamRotation;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -232,6 +277,9 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
             @Shoot.started += instance.OnShoot;
             @Shoot.performed += instance.OnShoot;
             @Shoot.canceled += instance.OnShoot;
+            @CamRotation.started += instance.OnCamRotation;
+            @CamRotation.performed += instance.OnCamRotation;
+            @CamRotation.canceled += instance.OnCamRotation;
         }
 
         private void UnregisterCallbacks(IControlsActions instance)
@@ -245,6 +293,9 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
             @Shoot.started -= instance.OnShoot;
             @Shoot.performed -= instance.OnShoot;
             @Shoot.canceled -= instance.OnShoot;
+            @CamRotation.started -= instance.OnCamRotation;
+            @CamRotation.performed -= instance.OnCamRotation;
+            @CamRotation.canceled -= instance.OnCamRotation;
         }
 
         public void RemoveCallbacks(IControlsActions instance)
@@ -267,5 +318,6 @@ public partial class @LauncherActionMap: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnAiming(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnCamRotation(InputAction.CallbackContext context);
     }
 }
